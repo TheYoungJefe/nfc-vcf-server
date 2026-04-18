@@ -1,0 +1,15 @@
+const crypto = require('crypto');
+
+const CHARSET = '23456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+const BASE = CHARSET.length;
+
+function generateRandomId(length = 6) {
+    let id = '';
+    const bytes = crypto.randomBytes(length);
+    for (let i = 0; i < length; i++) {
+        id += CHARSET[bytes[i] % BASE];
+    }
+    return id;
+}
+
+module.exports = { generateRandomId };

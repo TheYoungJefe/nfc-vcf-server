@@ -1,0 +1,31 @@
+function buildVCF(contact) {
+    const { name, phone, email } = contact;
+    
+    let vcf = 'BEGIN:VCARD\n';
+    vcf += 'VERSION:3.0\n';
+    
+    if (name) vcf += `FN:${escapeVCF(name)}\n`;
+    if (phone) vcf += `TEL;TYPE=CELL:${phone}\n`;
+    if (email) vcf += `EMAIL;TYPE=WORK:${email}\n`;
+    
+    vcf += 'END:VCARD\n';
+    return vcf;
+}
+
+function escapeVCF(str) {
+    if (!str) return '';
+    return str.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/,/g, '\\,');
+}
+
+function parseVCF(vcfContent) {
+    const contact = {};
+    const lines = vcfContent.split('\n');
+    for (const line of lines) {
+        if (line.startsWith('FN:')) contact.name = line.substring(3).trim();
+        else if (line.startsWith('TEL')) contact.phone = line.split(':')[1]?.trim();
+        else if (line.startsWith('EMAIL')) contact.email = line.split(':')[1]?.trim();
+    }
+    return contact;
+}
+
+module.exports = { buildVCF, parseVCF, escapeVCF };
